@@ -23,4 +23,17 @@ wd$datasets   <- paste0(wd$inputs, "datasets/")
 wd$outputs    <- paste0(wd$root, "02_outputs/")
 
 # Importamos el archivo shapefile
-peru_d <- st_read("DEPARTAMENTOS.shp")
+peru_sf <- st_read(paste0(wd$shapef, "INEI_LIMITE_DEPARTAMENTAL.shp"))
+
+# Mapa base: PERU
+ggplot(data = peru_sf) +
+  geom_sf()
+ggsave(paste0(wd$outputs, "basemap_pe.png"))
+
+
+# Mapa base: JUNIN
+ggplot(data = peru_d %>%
+         filter(NOMBDEP=="JUNIN")) +
+  geom_sf()
+ggsave(paste0(wd$outputs, "basemap_pejun.png"))
+
