@@ -49,5 +49,60 @@ ggplot(data = peru_sf) +
   geom_text_repel(mapping = aes(coords_x, coords_y, label = NOMBDEP), size = 2)
 ggsave(paste0(wd$outputs, "map_centroid.png"))
 
+# DATASETS
+## Tasa de pobreza (2016)
+povrate2016 <- read_csv(paste0(wd$datasets,"povrate2016.csv"))
+
+## Tasa de autoempleo (2016)
+selfrate2016 <- read_csv(paste0(wd$datasets,"selfrate2016.csv"))
+
+# JUNTAR bases de datos con shapefile
+peru_datos <- peru_sf %>%
+              left_join(povrate2016) %>%
+              left_join(selfrate2016)
+
+# GRÁFICOS finales
+
+## Gráfico 1: Tasa de pobreza (2016) sin etiquetas
+ggplot(peru_datos) +
+  geom_sf(aes(fill = poor))+
+  labs(title = "Porcentaje de población pobre\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)
+       Elaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Tasa de pobreza")+
+  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+  theme_bw()
+ggsave(paste0(wd$outputs, "poormap1.png"))
+
+## Gráfico 2: Tasa de pobreza (2016) con etiquetas
+ggplot(peru_datos) +
+  geom_sf(aes(fill = poor))+
+  labs(title = "Porcentaje de población pobre\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)
+       Elaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Tasa de pobreza")+
+  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+  geom_text_repel(mapping = aes(coords_x, coords_y, label = NOMBDEP), size = 2)+
+  theme_bw()
+ggsave(paste0(wd$outputs, "poormap2.png"))
+
+## Gráfico 3: Tasa de autoempleo (2016) sin etiquetas
+ggplot(peru_datos) +
+  geom_sf(aes(fill = self_employed))+
+  labs(title = "Porcentaje de población autoempleada\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)
+       Elaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Tasa de autoempleo")+
+  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+  theme_bw()
+ggsave(paste0(wd$outputs, "selfemployedmap1.png"))
+
+## Gráfico 4: Tasa de autoempleo (2016) con etiquetas
 
 
