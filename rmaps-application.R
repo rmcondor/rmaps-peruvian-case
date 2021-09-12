@@ -53,13 +53,13 @@ ggsave(paste0(wd$outputs, "map_centroid.png"))
 ## Tasa de pobreza (2016)
 povrate2016 <- read_csv(paste0(wd$datasets,"povrate2016.csv"))
 
-## Tasa de autoempleo (2016)
-selfrate2016 <- read_csv(paste0(wd$datasets,"selfrate2016.csv"))
+## Años de educación promedio (2016)
+educ2016 <- read_csv(paste0(wd$datasets,"educ2016.csv"))
 
 # JUNTAR bases de datos con shapefile
 peru_datos <- peru_sf %>%
               left_join(povrate2016) %>%
-              left_join(selfrate2016)
+              left_join(educ2016)
 
 # GRÁFICOS finales
 
@@ -67,8 +67,7 @@ peru_datos <- peru_sf %>%
 ggplot(peru_datos) +
   geom_sf(aes(fill = poor))+
   labs(title = "Porcentaje de población pobre\npor departamento (2016)",
-       caption = "Fuente: Enaho (2016)
-       Elaboración propia",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
        x="Longitud",
        y="Latitud",
        fill = "Tasa de pobreza")+
@@ -80,8 +79,7 @@ ggsave(paste0(wd$outputs, "poormap1.png"))
 ggplot(peru_datos) +
   geom_sf(aes(fill = poor))+
   labs(title = "Porcentaje de población pobre\npor departamento (2016)",
-       caption = "Fuente: Enaho (2016)
-       Elaboración propia",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
        x="Longitud",
        y="Latitud",
        fill = "Tasa de pobreza")+
@@ -90,19 +88,44 @@ ggplot(peru_datos) +
   theme_bw()
 ggsave(paste0(wd$outputs, "poormap2.png"))
 
-## Gráfico 3: Tasa de autoempleo (2016) sin etiquetas
+## Gráfico 3: Años de educación promedio (2016) sin etiquetas
 ggplot(peru_datos) +
-  geom_sf(aes(fill = self_employed))+
-  labs(title = "Porcentaje de población autoempleada\npor departamento (2016)",
-       caption = "Fuente: Enaho (2016)
-       Elaboración propia",
+  geom_sf(aes(fill = educ))+
+  labs(title = "Años de educación promedio\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
        x="Longitud",
        y="Latitud",
-       fill = "Tasa de autoempleo")+
-  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+       fill = "Años de educación")+
+  scale_fill_gradient(low = "darkseagreen1", high = "darkseagreen4")+
   theme_bw()
-ggsave(paste0(wd$outputs, "selfemployedmap1.png"))
+ggsave(paste0(wd$outputs, "educmap1.png"))
 
-## Gráfico 4: Tasa de autoempleo (2016) con etiquetas
+## Gráfico 4: Años de educación promedio (2016) con etiquetas
+ggplot(peru_datos) +
+  geom_sf(aes(fill = educ))+
+  labs(title = "Años de educación promedio\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Años de educación")+
+  scale_fill_gradient(low = "darkseagreen1", high = "darkseagreen4")+
+  geom_text_repel(mapping = aes(coords_x, coords_y, label = NOMBDEP), size = 2)+
+  theme_bw()
+ggsave(paste0(wd$outputs, "educmap2.png"))
+
+#Gráfico 5: Pobreza y años de educación (2016)
+ggplot(peru_datos) +
+  geom_sf(aes(fill = poor))+
+  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+  geom_point(aes(coords_x, coords_y, size = educ), color = "darkseagreen3")+
+  labs(title = "Pobreza y años de educación (2016)",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Tasa de pobreza",
+       size = "Años de educación")+
+  theme_bw()
+ggsave(paste0(wd$outputs, "povertyeduc.png"))
+
 
 
