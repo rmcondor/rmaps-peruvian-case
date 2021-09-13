@@ -12,7 +12,10 @@ library(ggplot2)
 library(ggrepel)
 ```
 ## Creación de mapas
-R nos permite leer los datos geoespaciales y tratarlos como un data frame, lo cual es conveniente para poder hacer mapas y agregar distintas capas como rellenos, leyendas, títulos, etc. El mapa más básico que podemos hacer es el que contiene solo las líneas fronterizas. Luego, podriamos agregar otras variables de interés que podrían ser presentadas usando un mapa. El objetivo de esta guía es elaborar un mapa que muestre el porcentaje de personas en condición de pobreza por departamentos.
+R nos permite leer los datos geoespaciales y tratarlos como un data frame, lo cual es conveniente para poder hacer mapas usando la libraría ggplot2 y agregar distintas capas como rellenos, leyendas, títulos, etc. El mapa más básico que podemos hacer es el que contiene solo las líneas fronterizas. Evidentemente, lo que buscamos es mostrar variables de una base de datos en el mapa. Los objetivos de esta guía son los siguientes:
+* Elaborar un mapa base del Perú con límites departamentales.
+* Mostrar la tasa de pobreza departamental y el promedio departamental de años de educación alcanzados en un mapa.
+* Elaborar un mapa para cada variable de manera separada y también de manera conjunta, para ver la relación entre la pobreza y los años de educación en el mapa.
 
 ```
 dirmapas <- "C:/file/directory"
