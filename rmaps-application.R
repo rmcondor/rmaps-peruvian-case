@@ -38,7 +38,7 @@ ggplot(data = peru_sf %>%
 ggsave(paste0(wd$outputs, "basemap_pejun.png"))
 
 # CENTROIDES: Colocar el nombre de cada departamento en el mapa
-## Creamos el cenrtroide
+## Creamos el centroide
 peru_sf <- peru_sf %>% mutate(centroid = map(geometry, st_centroid), 
                               coords = map(centroid, st_coordinates), 
                               coords_x = map_dbl(coords, 1), coords_y = map_dbl(coords, 2))
