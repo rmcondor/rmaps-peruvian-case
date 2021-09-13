@@ -55,10 +55,12 @@ ggplot(data = peru_sf) +
 
 También podemos hacer mapas de un departamento en específico si filtramos. En este caso, yo graficaré el mapa de Junín (ya que la sangre wanka corre por mis venas).
 ```
-ggplot(data = peru_d %>%
+ggplot(data = peru_sf %>%
          filter(NOMBDEP=="JUNIN")) +
   geom_sf()
 ```
+![basemap_pejun](https://user-images.githubusercontent.com/57784008/133008181-db7c0e6f-798a-4634-a197-895d6f892187.png)
+
 
 
 
