@@ -61,8 +61,85 @@ ggplot(data = peru_sf %>%
 ```
 ![basemap_pejun](https://user-images.githubusercontent.com/57784008/133008181-db7c0e6f-798a-4634-a197-895d6f892187.png)
 
+Asimismo, también podemos crear el mapa del Perú con una etiqueta para cada departamento si definimos los centroides de cada objeto.
+```
+peru_sf <- peru_sf %>% mutate(centroid = map(geometry, st_centroid), 
+                              coords = map(centroid, st_coordinates), 
+                              coords_x = map_dbl(coords, 1), coords_y = map_dbl(coords, 2))
+```
 
+Y luego estamos listo para graficar el mapa con etiquetas, solamente le agregaríamos una línea más al código que teníamos anteriormente. Además, para que no el mapa no se vea tan triste, le puse una tonalidad de celeste.
+```
+ggplot(data = peru_sf) +
+  geom_sf(fill="skyblue3", color="black", alpha = 0.7)+ 
+  geom_text_repel(mapping = aes(coords_x, coords_y, label = NOMBDEP), size = 2)
+```
+![map_centroid](https://user-images.githubusercontent.com/57784008/133008661-7e23d68c-2931-4468-949f-957de4b208f5.png)
 
+### Juntar con bases de datos
+Ya completamos el primer paso que es graficar un mapa. Evidentemente, lo que buscamos es reflejar algunos datos en él y para ello lo que debemos hacer es juntar el dataframe de datos referenciales con los archivos donde se encuentran las variables de interés. Para esta guía, se usó la Encuesta Nacional de Hogares del 2016, en específico, los módulos 3 y 34 para poder calcular la tasa de pobreza departamental y los años de educación promedio. Estos datos se encuentran en la carpeta "01_inputs/datasets" en archivos CSV.
 
+Lo primero que haremos será importar estas dos bases de datos.
+```
+## Tasa de pobreza (2016)
+povrate2016 <- read_csv(paste0(wd$datasets,"povrate2016.csv"))
 
+## Años de educación promedio (2016)
+educ2016 <- read_csv(paste0(wd$datasets,"educ2016.csv"))
+```
+Y luego, juntamos los datos georreferenciados "peru_sf" con las otras dos bases y lo nombramos "peru_datos". De esta manera, tenemos la información necesaria para generar los mapas y las variables de interés en un solo dataframe. Con esto, ya estaríamos listos para tener nuestros gráficos finales.
 
+```
+peru_datos <- peru_sf %>%
+              left_join(povrate2016) %>%
+              left_join(educ2016)
+```
+
+### Gráficos finales
+#### Gráfico 1: Tasa de pobreza por departamento (2016)
+```
+ggplot(peru_datos) +
+  geom_sf(aes(fill = poor))+
+  labs(title = "Porcentaje de población pobre\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Tasa de pobreza")+
+  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+  theme_bw()
+ggsave(paste0(wd$outputs, "poormap1.png"))
+```
+![poormap1](https://user-images.githubusercontent.com/57784008/133009342-8769f665-8146-4f06-81a4-bf1f0ac02369.png)
+
+#### Gráfico 2: Años de educación promedio por departamento (2016)
+```
+ggplot(peru_datos) +
+  geom_sf(aes(fill = educ))+
+  labs(title = "Años de educación promedio\npor departamento (2016)",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Años de educación")+
+  scale_fill_gradient(low = "darkseagreen1", high = "darkseagreen4")+
+  theme_bw()
+ggsave(paste0(wd$outputs, "educmap1.png"))
+```
+![educmap1](https://user-images.githubusercontent.com/57784008/133009434-c003605b-6539-4884-bc4b-6adff70ab881.png)
+
+#### Gráfico 3: Pobreza y años de educación (2016)
+```
+ggplot(peru_datos) +
+  geom_sf(aes(fill = poor))+
+  scale_fill_gradient(low = "steelblue1", high = "steelblue4")+
+  geom_point(aes(coords_x, coords_y, size = educ), color = "darkseagreen3")+
+  labs(title = "Pobreza y años de educación (2016)",
+       caption = "Fuente: Enaho (2016)\nElaboración propia",
+       x="Longitud",
+       y="Latitud",
+       fill = "Tasa de pobreza",
+       size = "Años de educación")+
+  theme_bw()
+ggsave(paste0(wd$outputs, "povertyeduc.png"))
+```
+
+![povertyeduc](https://user-images.githubusercontent.com/57784008/133009470-05969771-fec2-42c7-bf4b-f16fab757e68.png)
