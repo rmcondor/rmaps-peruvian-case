@@ -32,7 +32,7 @@ ggsave(paste0(wd$outputs, "basemap_pe.png"))
 
 
 # Mapa base: JUNIN
-ggplot(data = peru_d %>%
+ggplot(data = peru_sf %>%
          filter(NOMBDEP=="JUNIN")) +
   geom_sf()
 ggsave(paste0(wd$outputs, "basemap_pejun.png"))
